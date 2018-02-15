@@ -1,0 +1,56 @@
+<aura:component controller="fullCalendarApexController" access="global"  implements="force:appHostable,flexipage:availableForAllPageTypes">
+<!-- LIBRARIES -->
+<ltng:require styles="{!$Resource.fullCalendar + '/css/fullcalendar.min.css'}"
+scripts="{!join(',',
+    $Resource.fullCalendar + '/lib/jquery.min.js',
+    $Resource.fullCalendar + '/lib/moment.min.js',
+    $Resource.fullCalendar + '/lib/jquery-ui.min.js',
+    $Resource.fullCalendar + '/lib/fullcalendar.js')}"
+afterScriptsLoaded="{!c.jsLoaded}"/>
+
+ <!-- ATTRIBUTES -->
+<aura:attribute name="searchTerm" type="String" />
+<aura:attribute name="records" type="Object[]" description="List of records returned from the SOQL search" />
+
+<div class="slds slds-box slds-m-around--small">
+    <div class="slds-form-element slds-m-bottom--medium">
+      <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+        <lightning:icon iconName="utility:search" size="x-small" class="slds-input__icon slds-icon-text-default"/>
+        <ui:inputText value="{!v.searchTerm}" class="slds-input" placeholder="Search" updateOn="keyup" keyup="{!c.getRecordsBySearchTerm}"/>
+      </div>
+    </div>
+
+    <div class='draggable' data-event='{"title":"my event"}'>
+      <p>drag</p>
+    </div>
+    <div aura:id="external-events" id="{!globalId + 'external-events'}">
+      <ul>
+          <li>
+            <h3 class="slds-section-title--divider slds-m-vertical--small">
+              <div class="slds-grid slds-grid--vertical-align-center">
+                <div class="slds-col">
+                  CONTACTS
+                </div>
+                <div class="slds-col slds-text-align--right">
+                  <lightning:buttonIcon iconName="utility:add"
+                    variant="bare"
+                    title="Create new Contact"
+                    alternativeText="Create new Contact"
+                    onclick="{!c.createNewRecord}"
+                    name="Contact"/>
+                </div>
+              </div>
+            </h3>
+            <aura:if isTrue="{!v.records.length > 0}">
+            <ul class="slds-has-dividers--around-space">
+              <aura:iteration var="item" items="{!v.records}" indexVar="index">
+                <li ondragstart="{!c.dragStart}" data-event='1' draggable="true" class="slds-item fc-event">{!item.label}</li>
+                         </aura:iteration>
+            </ul>
+            </aura:if>    
+          </li>
+      </ul>
+    </div>
+  </div>
+  
+</aura:component>	

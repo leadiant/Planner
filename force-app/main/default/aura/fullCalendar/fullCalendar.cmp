@@ -1,0 +1,161 @@
+<aura:component controller="fullCalendarApexController" access="global" implements="force:appHostable,flexipage:availableForAllPageTypes">
+
+  <!-- LIBRARIES -->
+  <ltng:require styles="{!$Resource.fullCalendar + '/css/fullcalendar.min.css'}" scripts="{!join(',',
+            $Resource.fullCalendar + '/lib/jquery.min.js',
+            $Resource.fullCalendar + '/lib/moment.min.js',
+            $Resource.fullCalendar + '/lib/jquery-ui.min.js',
+            $Resource.fullCalendar + '/lib/fullcalendar.min.js')}" afterScriptsLoaded="{!c.jsLoaded}" />
+
+  <!-- ATTRIBUTES -->
+  <aura:attribute type="String" name="headerDate" />
+  <aura:attribute type="String" name="view" default="month" />
+  <aura:attribute name="events" type="Event[]" description="A list of events to display on the calendar" />
+  <aura:attribute name="ScheduledEvents" type="Object[]" />
+  <aura:attribute name="modal" type="Aura.Component" />
+  <aura:attribute name="addEventComponent" type="Aura.Component" />
+  <aura:attribute access="private" name="scheduledEvent" type="Object" default="{}" />
+  <aura:attribute name="showDeleteButton" type="Boolean" default="{!false}" access="private" />
+
+  <!-- Contact Search ATTRIBUTES -->
+  <aura:attribute name="filterObject" type="Object" />
+  <aura:attribute name="searchTerm" type="String" />
+  <aura:attribute name="records" type="Object[]" description="List of records returned from the SOQL search" access="private"
+  />
+
+    <!-- Page Search ATTRIBUTES -->
+    <aura:attribute name="pageSize" type="Integer" default="8"/>
+    <aura:attribute name="page" type="integer"/>
+    <aura:attribute name="pages" type="integer"/>
+    <aura:attribute name="total" type="integer"/>
+    <aura:attribute name="label" type="String" default="items"/>
+    
+
+  <!-- Full Screen ATTRIBUTES -->
+  <aura:attribute name="fullScreen" type="Boolean" default="false" access="global" />
+
+  <!-- DEPENDENCIES -->
+  <aura:dependency resource="markup://c:addEvent" type="COMPONENT" />
+  <aura:dependency resource="markup://c:toaster" type="COMPONENT" />
+  <aura:dependency resource="markup://c:Spinner" type="COMPONENT" />
+
+  <!-- EVENTS -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:registerEvent name="dayClickEvent" type="c:strike_evt" />
+  <aura:handler name="dayClickEvent" event="c:strike_evt" action="{!c.handledayClickEvent}" />
+  <aura:registerEvent name="eventClick" type="c:strike_evt" />
+  <aura:handler name="eventClick" event="c:strike_evt" action="{!c.handleEventClick}" />
+  <aura:registerEvent name="eventDrop" type="c:strike_evt" />
+  <aura:handler name="eventDrop" event="c:strike_evt" action="{!c.handleEventDrop}" />
+  <aura:registerEvent name="eventResize" type="c:strike_evt" />
+  <aura:handler name="eventResize" event="c:strike_evt" action="{!c.handleEventResize}" />
+  <aura:registerEvent name="drop" type="c:strike_evt" />
+  <aura:handler name="drop" event="c:strike_evt" action="{!c.handleDrop}" />
+  <aura:registerEvent name="eventReceive" type="c:strike_evt" />
+  <aura:handler name="eventReceive" event="c:strike_evt" action="{!c.handleEventReceive}" />
+
+  <aura:handler name="strike_evt_modalCloseButtonClicked" event="c:strike_evt" action="{!c.handleClickX}" />
+
+  <lightning:card iconName="standard:event">
+    <aura:set attribute="title">
+      <p class="slds-text-title_caps slds-line-height_reset">Event Planner
+      </p>
+      <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate" title="Leadiant Bioscience Inc.">Plan your upcoming Events.</h1>
+    </aura:set>
+    <aura:set attribute="actions">
+      <aura:if isTrue="{!v.fullScreen}">
+        <lightning:buttonIcon iconName="utility:contract" alternativeText="contract" onclick="{!c.toggle}" class="toggle" />
+        <aura:set attribute="else">
+          <lightning:buttonIcon iconName="utility:expand" alternativeText="contract" onclick="{!c.toggle}" class="toggle" />
+        </aura:set>
+      </aura:if>
+    </aura:set>
+  </lightning:card>
+  <div aura:id="container">
+    <lightning:layout >
+      <lightning:layoutItem aura:id="leftColumn" size="4" class="left">
+
+        <div class="slds slds-box slds-m-around_small slds-card">
+          <div class="slds-form-element slds-m-bottom_medium">
+            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+              <lightning:icon iconName="utility:search" size="x-small" class="slds-input__icon slds-icon-text-default" />
+              <ui:inputText value="{!v.searchTerm}" class="slds-input" placeholder="Search" updateOn="keyup" keyup="{!c.getRecordsBySearchTerm}"
+              />
+            </div>
+          </div>
+          <div aura:id="external-events" id="{!globalId + 'external-events'}">
+            <ul>
+              <li>
+                <h3 class="slds-section-title_divider slds-m-vertical_small">
+                  <div class="slds-grid slds-grid_vertical-align-center">
+                    <div class="slds-col">
+                      CONTACTS
+                    </div>
+                    <div class="slds-col slds-text-align_right">
+                      <lightning:buttonIcon iconName="utility:add" variant="bare" title="Create new Contact" alternativeText="Create new Contact"
+                        onclick="{!c.createNewRecord}" name="Contact" />
+                    </div>
+                  </div>
+                </h3>
+                <aura:if isTrue="{!v.records.length > 0}">
+                    <aura:iteration var="item" items="{!v.records}">
+
+                        <div class="fc-event element" data-sfid="{!item.value}">
+                            <lightning:layout verticalAlign="center">
+                                <lightning:layoutitem >
+                                    <lightning:icon iconName="utility:rows" size="x-small"></lightning:icon> 
+                                </lightning:layoutitem>
+                                <lightning:layoutitem padding="around-small">
+                                    <lightning:icon iconName="standard:contact" size="xx-small" alternativeText="Indicates approval"/>
+                                </lightning:layoutitem>
+                                <lightning:layoutitem flexibility="grow">
+                                    <div class="title slds-truncate">{!item.label}</div>
+                                    <div>Account: <span class="price">{!item.sublabel}</span></div>
+                                </lightning:layoutitem>
+                            </lightning:layout>
+                        </div> 
+                </aura:iteration>
+
+                <div class="Paginator">
+                    <div class="left">
+                        <aura:if isTrue="{!v.page > 1}">
+                            <lightning:buttonIcon iconName="utility:left" variant="border-filled" onclick="{!c.previousPage}"/>
+                        </aura:if>
+                    </div>
+                    <div class="centered">{!v.total}&nbsp;{!v.label} . page {!v.page} of {!v.pages}</div>
+                    <div class="right">
+                        <aura:if isTrue="{!v.page &lt; v.pages}">
+                            <lightning:buttonIcon iconName="utility:right" variant="border-filled" onclick="{!c.nextPage}"/>
+                        </aura:if>
+                    </div>
+              </div>
+
+                </aura:if>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </lightning:layoutItem>
+      <lightning:layoutItem size="8" aura:id="rightColumn" class="right">
+        <div class="slds slds-box slds-m-around_small slds-card">
+          <div id="calendar" class="anyCalendar" />
+        </div>
+        <!-- /BODY -->
+        <c:strike_modal aura:id="newEventModal" title="Create Event">
+          <aura:set attribute="footerButtons">
+            <div class="slds-modal__footer_directional">
+              <aura:if isTrue="{!v.showDeleteButton}">
+                <lightning:button onclick="{!c.handleClickDeleteModal}" label="Delete" variant="destructive" class="slds-float_left slds-float_left"
+                />
+              </aura:if>
+              <lightning:button variant="neutral" label="Cancel" onclick="{!c.handleClickCancelModal}" />
+              <lightning:button variant="brand" label="Save" onclick="{!c.handleClickSave}" />
+            </div>
+          </aura:set>
+        </c:strike_modal>
+        <c:toaster aura:id="toaster" />
+        <c:Spinner aura:id="spinner" />
+      </lightning:layoutItem>
+    </lightning:layout>
+  </div>
+</aura:component>

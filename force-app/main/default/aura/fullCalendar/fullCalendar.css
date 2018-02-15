@@ -1,0 +1,79 @@
+.THIS .anyCalendar{
+    font-family: 'Salesforce Sans',Arial,sans-serif;
+}
+.THIS .fc-toolbar h2 {
+    margin: 0;
+    font-family: 'Salesforce Sans',Arial,sans-serif;
+    font-size: 1.5em;
+    line-height: 1.5;
+    color: rgb(22, 50, 92);
+}
+.THIS button.fc-button {
+    text-transform: capitalize;
+}
+.THIS .fc-icon {
+    font-family: 'Salesforce Sans',Arial,sans-serif;
+}
+
+.THIS.fullscreen .left {
+    display: none;
+    
+}
+
+.THIS.fullscreen .right {
+    padding-right: 0;
+}
+
+.THIS .toggle {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+}
+
+.THIS .element {
+    cursor: -webkit-grab;
+    border-bottom: solid 1px #d8dde6;
+    width: 100%;
+}
+
+.THIS.element a {
+	color: inherit;
+}
+
+.THIS .element  .price,
+.THIS .element  .title {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.THIS .element  .price {
+    color: #FF6600;
+}
+
+.THIS .Paginator {
+    margin: 8px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.THIS.Paginator .left {
+
+}
+
+.THIS .Paginator .right {
+    text-align: right;
+}
+
+.THIS .Paginator .centered {
+    color: #999999;
+    font-size: 0.9rem;
+    text-align: center;
+	align-self: center;
+    padding: 0 12px;
+}
