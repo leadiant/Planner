@@ -2,11 +2,20 @@
     <aura:attribute access="public" name="scheduledEvent" type="Object" required="true" />
     <div class="slds-form slds-form--stacked" id="add-event-form">
         <ui:inputText aura:id="title" label="Title" value="{!v.scheduledEvent.title}" required="true" />
+        <lightning:layout class="slds-m-vertical_medium">
+                <lightning:layoutitem flexibility="grow" class="right-padding">
         <c:strike_lookup aura:id="contactLookup" label="Contact:" object="Contact" value="{!v.scheduledEvent.contactId}" valueSublabel="{!v.selectedAccountName}"
             searchField="Name" placeholder="Please enter minimum of two characters" iconName="standard:contact" subtitleField="Account.Name"
             order="Name" limit="5" loadingMessage="Loading..." required="true" errorMessage="Invalid input" showRecentRecords="true"
         />
-
+    </lightning:layoutitem>
+    <lightning:layoutitem flexibility="grow" class="right-padding">
+        <c:strike_lookup aura:id="accountLookup" label="Account:" object="Account" value="{!v.scheduledEvent.accountId}" 
+        searchField="Name" placeholder="Please enter minimum of two characters" iconName="standard:Account" 
+        order="Name" limit="5" loadingMessage="Loading..." required="true" errorMessage="Invalid input" showRecentRecords="true"
+    />
+</lightning:layoutitem>
+</lightning:layout>
         <ui:inputTextArea aura:id="description" label="Description" value="{!v.scheduledEvent.description}" rows="5" />
 
         <ui:inputDateTime aura:id="startTime" label="Start Time" value="{!v.scheduledEvent.start}" displayDatePicker="true" required="true"

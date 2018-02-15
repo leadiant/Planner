@@ -34,6 +34,13 @@
   <!-- Full Screen ATTRIBUTES -->
   <aura:attribute name="fullScreen" type="Boolean" default="false" access="global" />
 
+  <aura:attribute name="options" type="List" default="[
+    {'label': 'apples', 'value': 'option1'},
+    {'label': 'oranges', 'value': 'option2'}
+    ]"/>
+
+    <aura:attribute name="value1" type="String" default="option1"/>
+
   <!-- DEPENDENCIES -->
   <aura:dependency resource="markup://c:addEvent" type="COMPONENT" />
   <aura:dependency resource="markup://c:toaster" type="COMPONENT" />
@@ -75,14 +82,23 @@
     <lightning:layout >
       <lightning:layoutItem aura:id="leftColumn" size="4" class="left">
 
+          
+
         <div class="slds slds-box slds-m-around_small slds-card">
-          <div class="slds-form-element slds-m-bottom_medium">
-            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
-              <lightning:icon iconName="utility:search" size="x-small" class="slds-input__icon slds-icon-text-default" />
-              <ui:inputText value="{!v.searchTerm}" class="slds-input" placeholder="Search" updateOn="keyup" keyup="{!c.getRecordsBySearchTerm}"
-              />
-            </div>
-          </div>
+            <lightning:layout class="slds-m-vertical_medium">
+                
+
+                <lightning:layoutitem flexibility="grow" class="right-padding">
+                    <lightning:input placeholder="Please enter Search text" label="Search" value="{!v.searchTerm}" onchange="{!c.getRecordsBySearchTerm}"/>
+                </lightning:layoutitem>
+                <lightning:layoutitem flexibility="grow" class="right-padding">
+                    <lightning:select name="categorySelector" label="Search In" value="{!v.selectedValue}" onchange="{!c.changeHandler}">
+                        <aura:iteration items="{!v.categories}" var="category">
+                            <option text="{#category}" value="{#category}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutitem>
+              </lightning:layout>
           <div aura:id="external-events" id="{!globalId + 'external-events'}">
             <ul>
               <li>

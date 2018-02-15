@@ -145,6 +145,12 @@
 */
 	},
 
+		handleChange: function (cmp, event) {
+			var changeValue = event.getParam("value");
+			alert(changeValue);
+		},
+
+
 	handleEventReceive: function (cmp, evt, hlp) {
 		console.log('event received');
 		var droppedEvent = evt.getParam("data");
