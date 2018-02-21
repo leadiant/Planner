@@ -20,6 +20,12 @@ public class fullCalendarApexController {
         public String description {get;set;}
         @AuraEnabled
         public String contactName {get;set;}
+         @AuraEnabled
+        public String accountId {get;set;}
+        @AuraEnabled
+        public String accountName {get;set;}
+        @AuraEnabled
+        public String relatedTo {get;set;}
       
         public ScheduledEvent(Event event){
             Id = event.id;
@@ -30,6 +36,9 @@ public class fullCalendarApexController {
             description = event.Description;
             contactId = event.WhoId;
             contactName = event.who.Name;
+            accountId = event.WhatId;
+            accountName = event.account.Name;
+            relatedTo = event.WhatId == null ? 'Contact' : 'Account';
         }
         
         public Event toSObject(){
@@ -40,7 +49,8 @@ public class fullCalendarApexController {
                 StartDateTime = this.startString,
                 EndDateTime = this.endString,
                 Description = this.description,
-                WhoId = this.contactId
+                WhoId = this.contactId,
+                WhatId = this.accountId
             );
         }
     }
@@ -131,7 +141,7 @@ public class fullCalendarApexController {
 
     @AuraEnabled
     public static string upsertEvent(String jsonString){
-        
+        system.debug(jsonString);
         string jsonRequest = jsonString;
         jsonRequest = jsonRequest.replace('start','startString');
         jsonRequest = jsonRequest.replace('end','endString');

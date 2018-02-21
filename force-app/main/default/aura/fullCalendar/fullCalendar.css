@@ -30,6 +30,11 @@
     right: 18px;
 }
 
+.THIS .ui-droppable-hover
+{
+    border-color: #027FB3;
+}
+
 .THIS .element {
     cursor: -webkit-grab;
     border-bottom: solid 1px #d8dde6;

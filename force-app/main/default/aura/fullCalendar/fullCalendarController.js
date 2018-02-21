@@ -28,6 +28,16 @@
 
 	handleClickSave: function (component, event, helper) {
 		var action = component.get("c.upsertEvent");
+		var scheduledEvent = component.get("v.scheduledEvent");
+		
+		if (scheduledEvent.relatedTo == 'Contact')
+			scheduledEvent.accountId = null;
+
+		if (scheduledEvent.relatedTo == 'Account')
+			scheduledEvent.contactId = null;
+
+		component.set("v.scheduledEvent",scheduledEvent);
+
 		action.setParam("jsonString", JSON.stringify(component.get("v.scheduledEvent")));
 		action.setCallback(this, function (response) {
 			var state = response.getState();
@@ -93,7 +103,7 @@
 				cmp.set("v.scheduledEvent", ScheduledEvent);
 				var newModalBody = [
 					["c:addEvent", {
-						scheduledEvent: cmp.getReference("v.scheduledEvent")
+						scheduledEvent: cmp.getReference("v.scheduledEvent"),
 					}]
 				];
 				hlp.setModalBody(cmp, newModalBody);
@@ -245,7 +255,12 @@
 				},
 				eventRender: function(event, element)
 				{ 
-    				element.find('.fc-title').append("<br/>" + event.contactName); 
+					console.log(event.contactName);
+					console.log(event.accountName );
+					if (event.contactName == null)
+						element.find('.fc-title').append("<br/>" + event.accountName); 
+					else
+						element.find('.fc-title').append("<br/>" + event.contactName); 
 				},
 				eventDrop: function (event, delta, revertFunc) {
 					$A.getCallback(

@@ -44,7 +44,7 @@ afterScriptsLoaded="{!c.jsLoaded}"/>
             <aura:if isTrue="{!v.records.length > 0}">
             <ul class="slds-has-dividers--around-space">
               <aura:iteration var="item" items="{!v.records}" indexVar="index">
-                <li ondragstart="{!c.dragStart}" data-event='1' draggable="true" class="slds-item fc-event">{!item.label}</li>
+                <li data-event='1' class="slds-item fc-event">{!item.label}</li>
                          </aura:iteration>
             </ul>
             </aura:if>    

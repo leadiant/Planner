@@ -31,7 +31,7 @@
                         });
 						component.set('v.records', returnedRecords);
 						console.log(component.get("v.records"));
-					//	helper.makeSearchResultsDraggable(component,helper);
+						helper.makeSearchResultsDraggable(component,helper);
                     }
                 } else {
                     //helper.setRecords(component, event, helper, []);

@@ -16,12 +16,14 @@
 		var scheduledEvent = {
 			Id:null,
 			contactId: null,
+			accountId:null,
 			title:null,
 			start:startDateTime,
 			end:endDateTime,
 			allDay: false,
 			url:null,
-			description:null
+			description:null,
+			relatedTo:'Contact'
 		};
 		component.set("v.scheduledEvent", scheduledEvent);
 	},
